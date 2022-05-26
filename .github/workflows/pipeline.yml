@@ -40,6 +40,20 @@ jobs:
           healthcheck: "https://secure-fjord-41876.herokuapp.com/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
+      - name: Discord Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: github.event_name == 'push' && success()
+        with:
+          severity: info
+          text: Discord succeeded!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Discord Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: github.event_name == 'push' && failure()
+        with:
+          severity: error
+          text: 'Discord failed!'
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
